@@ -1,4 +1,4 @@
-import src
+import graph_builder.src as src
 from pathlib import Path
 from bokeh.models import ColumnDataSource, OpenURL, TapTool
 from bokeh.plotting import figure, output_file, show
