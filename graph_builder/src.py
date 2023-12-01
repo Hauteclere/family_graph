@@ -34,11 +34,11 @@ def filter_to_local_links(links, localpath):
         ) if is_in_parent_folder(locallink, localpath.resolve())
     ]
 
-def is_markdown_filepath(filepath: str):
+def is_markdown_filepath(filepath: Path):
     return (
-        isinstance(filepath, str) and (
-            bool(re.match(r".+\.md$", filepath)) or
-            bool(re.match(r".+\.md#.+", filepath))
+        isinstance(filepath, Path) and (
+            bool(re.match(r"^.+\.md$", str(filepath))) or
+            bool(re.match(r"^.+\.md#.+$", str(filepath)))
         )
     )
     
