@@ -2,6 +2,7 @@ from pathlib import Path, PosixPath
 import markdown
 import lxml.html
 import os
+import re
 
 all_edges = set()
 hyperlinks = dict()
@@ -33,9 +34,17 @@ def filter_to_local_links(links, localpath):
         ) if is_in_parent_folder(locallink, localpath.resolve())
     ]
 
+def is_markdown_filepath(filepath: str):
+    return (
+        isinstance(filepath, str) and (
+            bool(re.match(r".+\.md$", filepath)) or
+            bool(re.match(r".+\.md#.+", filepath))
+        )
+    )
+    
 def absolute_links_from_doctree(doctree: lxml.html, filepath: PosixPath):
     return filter(
-        lambda x: x,
+        lambda x: is_markdown_filepath(x),
         (
             get_absolute_path(
                 eachlink.get('href'),

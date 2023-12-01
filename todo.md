@@ -9,7 +9,8 @@
 | docs link to files that do not exist        | edges are not drawn to files that do not exist                 |         |
 | docs are missing headings                   | edges are not drawn to docs missing headings (warning printed) |         |
 | docs link trivially (i.e. to themselves)    | trivial edges are not drawn                                    |         |
-| docs are unlinked                           | nodes are still drawn |         |
+| docs are unlinked                           | nodes are still drawn                                          |         |
+| what happens when a link has an empty path |                                                                |         |
 
 ## Functionality
 - [ ] apply type enforcement and better hinting
