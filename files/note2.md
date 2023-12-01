@@ -1,3 +1,3 @@
 # Note 2
 
-[link a](./note1.md)
+[link a](/home/oliver/note1.md)
