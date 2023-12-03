@@ -35,3 +35,21 @@ class TestGetAbsolutePath(unittest.TestCase):
             src.get_absolute_path(anchor_path, parent),
             Path("/home/olive/files/example.md")
         )
+
+    # Need more probably, better check
+
+class TestGetNodes(unittest.TestCase):
+    def test_duplicate_headings(self):
+        all_headings_and_links = {
+            "1.md": {
+                "heading": "Same Heading",
+                "links": []
+            },
+            "2.md": {
+                "heading": "Same Heading",
+                "links": []
+            }
+        }
+
+        with self.assertRaises(ValueError):
+            src.get_nodes(all_headings_and_links)

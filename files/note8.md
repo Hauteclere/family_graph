@@ -1,0 +1,3 @@
+# Note 6
+
+This file should cause a ValueError...

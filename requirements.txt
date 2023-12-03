@@ -2,6 +2,8 @@ contourpy==1.2.0
 cycler==0.12.1
 fonttools==4.45.1
 kiwisolver==1.4.5
+lxml==4.9.3
+Markdown==3.5.1
 matplotlib==3.8.2
 networkx==3.2.1
 numpy==1.26.2

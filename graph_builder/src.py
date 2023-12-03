@@ -7,7 +7,15 @@ import re
 all_edges = set()
 hyperlinks = dict()
 
-class NoHeadingError(ValueError):
+class GraphBuilderError(ValueError):
+    def __init__(self, message):
+        self.message = message
+        super().__init__()
+
+class NoHeadingError(GraphBuilderError):
+    pass
+
+class DuplicateHeadingsError(GraphBuilderError):
     pass
 
 def get_absolute_path(somepath: str, parent: PosixPath):
@@ -24,7 +32,7 @@ def is_in_parent_folder(somepath: PosixPath, somefolder: PosixPath):
 def get_heading_from_doctree(doctree: lxml.html):
     headings = doctree.xpath('//h1')
     if not headings:
-        raise NoHeadingError()
+        raise NoHeadingError("No heading found!")
     return headings[0].text
 
 def filter_to_local_links(links, localpath):
@@ -79,7 +87,7 @@ def all_headings_and_links(somefolder: PosixPath):
         try:
             result[eachpath.resolve()] = heading_and_links_from_filepath(eachpath, somefolder)
         except NoHeadingError:
-            print(f"WARNING: file at {eachpath.resolve()} is malformed - no heading")
+            print(f"\t...WARNING: file at {eachpath.resolve()} is malformed - no heading. \n\tThis file will not be added to the graph.")
     return result
 
 def get_edges(all_headings_and_links: dict):
@@ -100,6 +108,10 @@ def get_edges(all_headings_and_links: dict):
 
 def get_nodes(all_headings_and_links: dict):
     nodes = set()
-    for eachfile, heading_and_links in all_headings_and_links.items():
-        nodes.add(heading_and_links["heading"])
+    for eachfile, eachdetails in all_headings_and_links.items():
+        if eachdetails["heading"] in nodes:
+            message = f"Multiple pages have the same heading: {' and '.join([str(otherfile) for otherfile, otherdetails in all_headings_and_links.items() if otherdetails['heading']==eachdetails['heading']])}"
+            raise DuplicateHeadingsError(message)
+        
+        nodes.add(eachdetails["heading"])
     return nodes
