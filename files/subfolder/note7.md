@@ -1,7 +1,4 @@
-# Hi
+# Note 7
 
 ## Hello
 
-[bad link]()
-
-[good link](./note7.md#hello)

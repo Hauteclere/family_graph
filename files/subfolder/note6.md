@@ -1,3 +1,3 @@
 # Note 6
 
-[link to note2](../note2.md)
+[link to note2](./note7.md#hello)
