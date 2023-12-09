@@ -74,19 +74,22 @@ class GraphedFile():
     
     @property
     def links(self) -> set:
-        return {
-            self.get_absolute_path(
-                eachlink.get('href')
-            ) for eachlink in self.doctree.xpath('//a')
-        }
+        return set(
+            map(
+                self.get_absolute_path,
+                (
+                    eachlink.get('href') for eachlink in self.doctree.xpath('//a')
+                )
+            )
+        )
     
     def get_absolute_path(self, somepath: str) -> Path:
         if not isinstance(somepath, str) or not len(somepath):
-            return Path("/there/is/no/path")
+            return None
         if somepath[0] == "/":
             return somepath
         return (self.p_path.parent.resolve() / somepath.split('#')[0]).resolve()
         
 
-    
+
     
