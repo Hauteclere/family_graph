@@ -57,10 +57,10 @@ class GraphedDirectory():
 
     
 class GraphedFile():
-    def __init__(self, graphed_dir: GraphedDirectory, p_path: PosixPath) -> None:
-        self.p_path = p_path
+    def __init__(self, graphed_dir: GraphedDirectory, path: PosixPath) -> None:
+        self.path = path
 
-        with open(self.p_path) as file:
+        with open(self.path) as file:
             self.graphed_dir = graphed_dir
             self.doctree = lxml.html.fromstring(markdown.markdown(file.read()))
     
@@ -68,7 +68,7 @@ class GraphedFile():
     def heading(self) -> str:
         headings = self.doctree.xpath('//h1')
         if not headings:
-            print(f"\t...WARNING: file at {self.p_path.resolve()} is malformed - no heading. \n\t\tThis file will not be added to the graph.")
+            print(f"\t...WARNING: file at {self.path.resolve()} is malformed - no heading. \n\t\tThis file will not be added to the graph.")
             return None
         return headings[0].text
     
@@ -87,8 +87,8 @@ class GraphedFile():
         if not isinstance(somepath, str) or not len(somepath):
             return None
         if somepath[0] == "/":
-            return somepath
-        return (self.p_path.parent.resolve() / somepath.split('#')[0]).resolve()
+            return Path(somepath)
+        return (self.path.parent.resolve() / somepath.split('#')[0]).resolve()
         
 
 
