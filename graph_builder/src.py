@@ -38,20 +38,19 @@ class GraphedDirectory():
         for path, file in self.files.items():
             try:
                 heading = file.heading
-
-                if heading in nodes:
-                    bad_files = [
-                        str(badpath) for badpath, bad_file in self.files.items() if bad_file.heading == file.heading
-                    ]
-                    message = f"Multiple pages have the same heading: {' and '.join(bad_files)}."
-                    raise DuplicateHeadingsError(message)
-                
-                nodes.add(heading)
-            
             except NoHeadingError as e:
                 print(e.message)
-                pass
+                continue
+
+            if heading in nodes:
+                bad_files = [
+                    str(badpath) for badpath, bad_file in self.files.items() if bad_file.heading == file.heading
+                ]
+                message = f"Multiple pages have the same heading: {' and '.join(bad_files)}."
+                raise DuplicateHeadingsError(message)
             
+            nodes.add(heading)
+
         return {
             "nodes": nodes,
             "edges": {
