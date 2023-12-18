@@ -10,6 +10,9 @@ class GraphBuilderError(ValueError):
 class DuplicateHeadingsError(GraphBuilderError):
     pass
 
+class NoHeadingError(GraphBuilderError):
+    pass
+
 class GraphedDirectory():
     def __init__(self, path_string: str) -> None:
         self.p_path = Path(path_string)
@@ -33,18 +36,22 @@ class GraphedDirectory():
         nodes = set()
 
         for path, file in self.files.items():
-            heading = file.heading
-            if heading is None:
-                continue
-            if heading in nodes:
-                bad_files = [
-                    str(badpath) for badpath, bad_file in self.files.items() if bad_file.heading == file.heading
-                ]
-                message = f"Multiple pages have the same heading: {' and '.join(bad_files)}."
+            try:
+                heading = file.heading
+
+                if heading in nodes:
+                    bad_files = [
+                        str(badpath) for badpath, bad_file in self.files.items() if bad_file.heading == file.heading
+                    ]
+                    message = f"Multiple pages have the same heading: {' and '.join(bad_files)}."
+                    raise DuplicateHeadingsError(message)
                 
-                raise DuplicateHeadingsError(message)
-            nodes.add(heading)
-        
+                nodes.add(heading)
+            
+            except NoHeadingError as e:
+                print(e.message)
+                pass
+            
         return {
             "nodes": nodes,
             "edges": {
@@ -55,21 +62,20 @@ class GraphedDirectory():
             }
         }
 
-    
 class GraphedFile():
     def __init__(self, graphed_dir: GraphedDirectory, path: PosixPath) -> None:
         self.path = path
+        self.graphed_dir = graphed_dir
 
         with open(self.path) as file:
-            self.graphed_dir = graphed_dir
             self.doctree = lxml.html.fromstring(markdown.markdown(file.read()))
     
     @property
     def heading(self) -> str:
         headings = self.doctree.xpath('//h1')
         if not headings:
-            print(f"\t...WARNING: file at {self.path.resolve()} is malformed - no heading. \n\t\tThis file will not be added to the graph.")
-            return None
+            error_text = f"\t...WARNING: file at {self.path.resolve()} is malformed - no heading. \n\t\tThis file will not be added to the graph."
+            raise NoHeadingError(error_text)
         return headings[0].text
     
     @property
